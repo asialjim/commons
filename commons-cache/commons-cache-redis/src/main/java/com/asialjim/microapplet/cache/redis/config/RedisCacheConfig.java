@@ -35,10 +35,6 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.util.function.Consumer;
-
-import static com.asialjim.microapplet.common.utils.JacksonUtil.*;
-
 
 /**
  * 启用缓存
@@ -50,7 +46,7 @@ import static com.asialjim.microapplet.common.utils.JacksonUtil.*;
 @Setter
 @Configuration
 @EnableCaching
-public class CacheConfig implements CachingConfigurer {
+public class RedisCacheConfig implements CachingConfigurer {
 
     @Bean
     @Primary
@@ -69,9 +65,9 @@ public class CacheConfig implements CachingConfigurer {
 
     @Bean
     @Primary
-    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory,
-                                          CacheNameAndTTLHub cacheNameAndTTLHub,
-                                          GenericJackson2JsonRedisSerializer jsonSerializer) {
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory connectionFactory,
+                                               CacheNameAndTTLHub cacheNameAndTTLHub,
+                                               GenericJackson2JsonRedisSerializer jsonSerializer) {
 
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer.UTF_8))

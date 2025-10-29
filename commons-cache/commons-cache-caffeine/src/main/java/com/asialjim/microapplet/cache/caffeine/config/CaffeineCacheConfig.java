@@ -16,23 +16,38 @@
 
 package com.asialjim.microapplet.cache.caffeine.config;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Setter;
-import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
-@Setter
+import java.time.Duration;
+
+/**
+ * Caffeine 缓存配置
+ *
+ * @author <a href="mailto:asialjim@hotmail.com">Asial Jim</a>
+ * @version 1.0
+ * @since 2025/10/29, &nbsp;&nbsp; <em>version:1.0</em>
+ */
 @Configuration
 @EnableCaching
-public class CacheConfig implements CachingConfigurer {
+public class CaffeineCacheConfig {
 
     @Bean
-    @Primary
-    public CaffeineCacheManager caffeineCacheManager() {
-        CaffeineCacheManager manager = new CaffeineCacheManager();
-        return manager;
+    public Caffeine<Object, Object> caffeineConfig() {
+        return Caffeine.newBuilder()
+                .expireAfterWrite(Duration.ofSeconds(30))
+                .maximumSize(1000);
+    }
+
+    @Bean
+    public CaffeineCacheManager caffeineCacheManager(Caffeine<Object, Object> caffeineConfig) {
+        CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
+        caffeineCacheManager.setAllowNullValues(true);
+        caffeineCacheManager.setCaffeine(caffeineConfig);
+        return caffeineCacheManager;
     }
 }

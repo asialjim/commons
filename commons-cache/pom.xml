@@ -30,6 +30,7 @@
     <modules>
         <module>commons-cache-redis</module>
         <module>commons-cache-caffeine</module>
+        <module>commons-cache-caffeine-redis</module>
     </modules>
 
 </project>
