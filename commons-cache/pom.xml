@@ -29,6 +29,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>commons-cache-redis</module>
+        <module>commons-cache-caffeine</module>
     </modules>
 
 </project>
