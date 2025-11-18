@@ -31,6 +31,7 @@
     <modules>
         <module>commons-security-core</module>
         <module>commons-security-web</module>
+        <module>commons-security-shiro</module>
     </modules>
 
 

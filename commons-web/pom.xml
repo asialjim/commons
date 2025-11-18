@@ -34,6 +34,7 @@
         <module>commons-web-tomcat</module>
         <module>commons-web-undertow</module>
         <module>commons-web-nacos</module>
+        <module>commons-web-sensitive</module>
     </modules>
 
 
