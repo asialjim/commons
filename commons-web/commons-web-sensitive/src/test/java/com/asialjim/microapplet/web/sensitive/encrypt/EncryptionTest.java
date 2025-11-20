@@ -16,7 +16,7 @@
 
 package com.asialjim.microapplet.web.sensitive.encrypt;
 
-import com.asialjim.microapplet.web.sensitive.handler.ChineseCitizenIdCardSensitiveHandler;
+import com.asialjim.microapplet.web.sensitive.handler.EMailSensitiveHandler;
 import org.junit.Test;
 
 import javax.crypto.SecretKey;
@@ -34,7 +34,7 @@ public class EncryptionTest {
         SecretKey gmMacKey = KeyManager.getOrGenerateKey(KeyManager.KEY_TYPE_GM_MAC);
 
         // 测试数据
-        String sensitiveData = "110101199001011234";
+        String sensitiveData = "110101199001011234@ggg.com";
 
         System.out.println("原始数据: " + sensitiveData);
         System.out.println("=====================================");
@@ -55,7 +55,8 @@ public class EncryptionTest {
 
         // 加密
         EncryptionResult result = context.encrypt(sensitiveData, modernKey, null);
-        String mask = new ChineseCitizenIdCardSensitiveHandler().mask(sensitiveData);
+
+        String mask = new EMailSensitiveHandler().mask(sensitiveData);
         String formatted = result.withMask(mask);
         System.out.println("加密结果: " + formatted);
 
@@ -72,7 +73,7 @@ public class EncryptionTest {
 
         // 加密
         EncryptionResult result = context.encrypt(sensitiveData, gmEncryptionKey, gmMacKey);
-        String mask = new ChineseCitizenIdCardSensitiveHandler().mask(sensitiveData);
+        String mask = new EMailSensitiveHandler().mask(sensitiveData);
         String formatted = result.withMask(mask);
         System.out.println("加密结果: " + formatted);
 
