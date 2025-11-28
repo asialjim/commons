@@ -14,27 +14,7 @@
  *    limitations under the License.
  */
 
-package com.asialjim.microapplet.common.utils;
+package com.asialjim.microapplet.web.mvc.servlet;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-
-/**
- * JSON 工具，基于 Jackson
- *
- * @author <a href="mailto:asialjim@hotmail.com">Asial Jim</a>
- * @version 1.0
- * @since 2025/8/7, &nbsp;&nbsp; <em>version:1.0</em>
- */
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class JsonUtil extends JacksonUtil {
-    public static final JacksonUtil instance = new JsonUtil();
-
-    private static final ObjectMapper mapper = init(new ObjectMapper());
-
-    @Override
-    public ObjectMapper objectMapper() {
-        return mapper;
-    }
+public class CachedHttpServletResponseWrapper {
 }

@@ -20,10 +20,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -42,10 +40,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * 基于jackson的工具
@@ -56,12 +51,16 @@ import java.util.TimeZone;
  */
 @SuppressWarnings("unused")
 public abstract class JacksonUtil {
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Shanghai"));
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Asia/Shanghai"));
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.of("Asia/Shanghai"));
+
 
     public static JacksonUtil instance(ObjectMapper mapper) {
         return new JacksonUtil() {
 
             @Override
-            protected ObjectMapper objectMapper() {
+            public ObjectMapper objectMapper() {
                 return mapper;
             }
         };
@@ -107,28 +106,40 @@ public abstract class JacksonUtil {
         simpleDateFormat.setTimeZone(timeZone);
         mapper.setDateFormat(simpleDateFormat);
 
-        // 配置JavaTime模块
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-
-        // 配置日期时间序列化/反序列化
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Shanghai"));
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.of("Asia/Shanghai"));
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.of("Asia/Shanghai"));
-
-
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
-
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter));
-
-        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
-
-        mapper.registerModules(javaTimeModule, new Jdk8Module());
+        Module[] modules = getModules();
+        mapper.registerModules(modules);
     }
 
+    public static Module[] getModules() {
+        return new Module[]{javaTimeModule(), new Jdk8Module()};
+    }
+
+    public static JavaTimeModule javaTimeModule() {
+        // 配置JavaTime模块
+        final JavaTimeModule javaTimeModule = new JavaTimeModule();
+
+        serializers().forEach((k, v) -> javaTimeModule.addSerializer((Class) k, v));
+        deserializers().forEach((k, v) -> javaTimeModule.addDeserializer((Class) k, v));
+
+        return javaTimeModule;
+    }
+
+
+    public static Map<Class<?>, JsonSerializer<?>> serializers() {
+        Map<Class<?>, JsonSerializer<?>> map = new HashMap<>();
+        map.put(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
+        map.put(LocalDate.class, new LocalDateSerializer(dateFormatter));
+        map.put(LocalTime.class, new LocalTimeSerializer(timeFormatter));
+        return map;
+    }
+
+    public static Map<Class<?>, JsonDeserializer<?>> deserializers() {
+        Map<Class<?>, JsonDeserializer<?>> map = new HashMap<>();
+        map.put(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
+        map.put(LocalDate.class, new LocalDateDeserializer(dateFormatter));
+        map.put(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
+        return map;
+    }
 
     public static void configureSerializationInclusion(ObjectMapper mapper) {
         // 注意：setSerializationInclusion 会覆盖前一个设置
@@ -136,7 +147,7 @@ public abstract class JacksonUtil {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     }
 
-    protected abstract ObjectMapper objectMapper();
+    public abstract ObjectMapper objectMapper();
 
     public final JavaType constructType(Type type) {
         return objectMapper().getTypeFactory().constructType(type);

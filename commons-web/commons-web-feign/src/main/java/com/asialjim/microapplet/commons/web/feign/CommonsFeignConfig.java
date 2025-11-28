@@ -1,17 +1,17 @@
 /*
- * Copyright 2014-2025 <a href="mailto:asialjim@qq.com">Asial Jim</a>
+ *    Copyright 2014-2025 <a href="mailto:asialjim@qq.com">Asial Jim</a>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 package com.asialjim.microapplet.commons.web.feign;
@@ -22,9 +22,8 @@ import com.asialjim.microapplet.common.page.PageData;
 import com.asialjim.microapplet.common.utils.JsonUtil;
 import com.fasterxml.jackson.databind.JavaType;
 import feign.*;
-import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.MDC;
@@ -41,9 +40,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +57,7 @@ import static com.asialjim.microapplet.common.cons.Headers.*;
  * @version 1.0
  * @since 2025/3/14, &nbsp;&nbsp; <em>version:1.0</em>
  */
+@Slf4j
 @Configuration
 @EnableFeignClients
 public class CommonsFeignConfig {
@@ -145,7 +143,7 @@ public class CommonsFeignConfig {
 
                 List<String> errs = null;
                 if (StringUtils.isNotBlank(errorJson))
-                    errs = JsonUtil.instance.toList(errorJson,String.class);
+                    errs = JsonUtil.instance.toList(errorJson, String.class);
 
                 if (status >= 400)
                     new RsEx().setStatus(status).setThr(thr).setCode(code).setMsg(msg).setErrs(errs).cast();
@@ -166,11 +164,18 @@ public class CommonsFeignConfig {
 
                     JavaType javaType = JsonUtil.instance.constructParameterizedType(PageData.class, classes);
                     return JsonUtil.instance.toBean(response.body().asInputStream(), javaType);
+                    /*
+                    InputStream inputStream = response.body().asInputStream();
+                    byte[] byteArray = IOUtils.toByteArray(inputStream);
+                    String json = new String(byteArray, StandardCharsets.UTF_8);
+                    log.info("\r\nJson: \r\n{}", json);
+                    return JsonUtil.instance.toBean(json, javaType);
+                    */
                 }
                 return super.decode(response, type);
             }
 
-            private boolean thr(Map<String,Collection<String>>headers){
+            private boolean thr(Map<String, Collection<String>> headers) {
                 String thr = header(headers, X_RES_THROWABLE);
                 if (StringUtils.isNotBlank(thr))
                     return Boolean.parseBoolean(thr);
