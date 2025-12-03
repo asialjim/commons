@@ -19,7 +19,6 @@ package com.asialjim.microapplet.common.event;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +33,7 @@ import java.util.concurrent.Executor;
  * @version 1.0
  * @since 2025/10/21, &nbsp;&nbsp; <em>version:1.0</em>
  */
-@Component
+//@Component
 public class ListenerPostProcessor implements BeanPostProcessor {
     private final Executor executor;
 

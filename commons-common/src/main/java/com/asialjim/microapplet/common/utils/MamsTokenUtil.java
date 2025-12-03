@@ -1,5 +1,5 @@
 /*
- *    Copyright 2014-$year.today <a href="mailto:asialjim@qq.com">Asial Jim</a>
+ *    Copyright 2014-2025 <a href="mailto:asialjim@qq.com">Asial Jim</a>
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -37,18 +37,17 @@ public class MamsTokenUtil {
     private static final long BEGIN = 1726000000L; // 秒级基准
 
     /**
-     * 妈妈的记号直到
-     *
      */
     private MamsTokenUtil() {
     }
+
 
     /**
      * 秘密
      *
      * @return {@link String}
      */
-    private static String secret() {
+    public static String secret() {
         String property = System.getProperty("com.asialjim.microapplet.token.secret");
         if (StringUtils.isNotBlank(property)) {
             int length = StringUtils.length(property);

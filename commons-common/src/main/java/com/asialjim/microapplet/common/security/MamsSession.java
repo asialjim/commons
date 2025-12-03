@@ -23,6 +23,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * MAMS 会话信息
@@ -117,7 +118,16 @@ public final class MamsSession implements Serializable {
      *
      * @param duration 持续时间
      */
-    public void expireAfter(Duration duration) {
+    public MamsSession expireAfter(Duration duration) {
         this.expireAt = LocalDateTime.now().plusMinutes(duration.toMinutes());
+        return this;
+    }
+
+    public boolean isExpired() {
+        LocalDateTime expireAt = getExpireAt();
+        if (Objects.isNull(expireAt))
+            return false;
+        LocalDateTime now = LocalDateTime.now();
+        return now.isAfter(expireAt);
     }
 }
