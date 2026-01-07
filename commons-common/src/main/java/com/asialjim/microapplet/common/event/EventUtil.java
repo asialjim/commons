@@ -62,7 +62,8 @@ public class EventUtil implements ApplicationContextAware, CommandLineRunner {
 
         if (listeners.contains(listener))
             return;
-        log.info("事件总线注册事件：{} 监听器：{}", type, listener);
+        if (log.isDebugEnabled())
+            log.info("事件总线注册事件：{} 监听器：{}", type, listener);
         listeners.add(listener);
     }
 
